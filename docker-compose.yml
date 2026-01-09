@@ -1,0 +1,42 @@
+services:
+  redis:
+    image: redis
+    container_name: telegram-campaign-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - telegram-campaign-network
+    restart: unless-stopped
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: telegram-campaign-app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env.local
+    environment:
+      - NODE_ENV=${NODE_ENV:-production}
+      - REDIS_HOST=${REDIS_HOST:-redis}
+      - REDIS_PORT=${REDIS_PORT:-6379}
+      - ADMIN_PASSWORD=${ADMIN_PASSWORD:-admin123}
+      - TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN}
+    volumes:
+      # Persist SQLite database and media files
+      - ./data:/app/data
+    depends_on:
+      - redis
+    networks:
+      - telegram-campaign-network
+    restart: unless-stopped
+
+volumes:
+  redis-data:
+
+networks:
+  telegram-campaign-network:
+    driver: bridge
