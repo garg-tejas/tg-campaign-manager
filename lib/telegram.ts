@@ -1,4 +1,5 @@
 import TelegramBot from 'node-telegram-bot-api'
+import type { Message } from 'node-telegram-bot-api'
 
 const token = process.env.TELEGRAM_BOT_TOKEN
 
@@ -150,15 +151,15 @@ export async function sendTextMessage(
   chatId: string,
   text: string,
   options: SendMessageOptions = {}
-): Promise<TelegramBot.Message> {
+): Promise<Message> {
   const bot = getBot()
   const escapedText = escapeText(text, options.parseMode)
   
   return await bot.sendMessage(chatId, escapedText, {
     parse_mode: options.parseMode,
-    disable_web_page_preview: options.disablePreview,
+    link_preview_options: options.disablePreview === undefined ? undefined : { is_disabled: options.disablePreview },
     disable_notification: options.disableNotification,
-    reply_to_message_id: options.replyToMessageId,
+    reply_parameters: options.replyToMessageId === undefined ? undefined : { message_id: options.replyToMessageId },
   })
 }
 
@@ -167,7 +168,7 @@ export async function sendPhoto(
   photo: string | Buffer,
   caption: string,
   options: SendMessageOptions = {}
-): Promise<TelegramBot.Message> {
+): Promise<Message> {
   const bot = getBot()
   const escapedCaption = escapeText(caption, options.parseMode)
   
@@ -175,7 +176,7 @@ export async function sendPhoto(
     caption: escapedCaption,
     parse_mode: options.parseMode,
     disable_notification: options.disableNotification,
-    reply_to_message_id: options.replyToMessageId,
+    reply_parameters: options.replyToMessageId === undefined ? undefined : { message_id: options.replyToMessageId },
   })
 }
 
@@ -184,7 +185,7 @@ export async function sendVideo(
   video: string | Buffer,
   caption: string,
   options: SendMessageOptions = {}
-): Promise<TelegramBot.Message> {
+): Promise<Message> {
   const bot = getBot()
   const escapedCaption = escapeText(caption, options.parseMode)
   
@@ -192,7 +193,7 @@ export async function sendVideo(
     caption: escapedCaption,
     parse_mode: options.parseMode,
     disable_notification: options.disableNotification,
-    reply_to_message_id: options.replyToMessageId,
+    reply_parameters: options.replyToMessageId === undefined ? undefined : { message_id: options.replyToMessageId },
   })
 }
 
@@ -201,7 +202,7 @@ export async function sendDocument(
   document: string | Buffer,
   caption: string,
   options: SendMessageOptions = {}
-): Promise<TelegramBot.Message> {
+): Promise<Message> {
   const bot = getBot()
   const escapedCaption = escapeText(caption, options.parseMode)
   
@@ -209,7 +210,7 @@ export async function sendDocument(
     caption: escapedCaption,
     parse_mode: options.parseMode,
     disable_notification: options.disableNotification,
-    reply_to_message_id: options.replyToMessageId,
+    reply_parameters: options.replyToMessageId === undefined ? undefined : { message_id: options.replyToMessageId },
   })
 }
 

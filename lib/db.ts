@@ -1,7 +1,8 @@
 import Database from 'better-sqlite3'
 import path from 'path'
 
-const dbPath = path.join(process.cwd(), 'data', 'campaigns.db')
+// A separate path lets build/CI checks avoid opening the user's campaign data.
+const dbPath = process.env.CAMPAIGN_DATABASE_PATH || path.join(process.cwd(), 'data', 'campaigns.db')
 const db = new Database(dbPath)
 
 db.pragma('foreign_keys = ON')

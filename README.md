@@ -10,7 +10,7 @@ This tool lets you send messages to multiple Telegram channels at once, schedule
 
 You'll need:
 
-- Node.js 18 or higher
+- A patched Node.js release (24.22.1 is selected in `.node-version`)
 - A Telegram bot token (get one from [@BotFather](https://t.me/botfather))
 - Redis running locally or via Docker
 - Your bot must be an admin in the channels you want to post to
@@ -28,6 +28,10 @@ If you get errors with better-sqlite3, rebuild it:
 ```bash
 pnpm rebuild better-sqlite3
 ```
+
+Build/CI checks can set `CAMPAIGN_DATABASE_PATH` to a separate SQLite file. Its
+parent directory must exist. Without this variable, the application uses the
+existing `data/campaigns.db` path. This does not enable a worker or send messages.
 
 ### 2. Set Up Environment Variables
 

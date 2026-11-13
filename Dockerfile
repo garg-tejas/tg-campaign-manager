@@ -1,5 +1,5 @@
 # Use Node.js LTS version
-FROM node:20-alpine AS base
+FROM node:24.22.1-alpine3.24 AS base
 
 # Install dependencies only when needed
 FROM base AS deps
@@ -7,7 +7,7 @@ RUN apk add --no-cache libc6-compat python3 make g++
 WORKDIR /app
 
 # Copy package files
-COPY package.json package-lock.json* pnpm-lock.yaml* ./
+COPY package.json pnpm-lock.yaml pnpm-workspace.yaml ./
 
 # Install dependencies based on package manager
 RUN \
@@ -37,10 +37,12 @@ RUN \
 
 # Build the application
 RUN \
+    mkdir -p /tmp/campaign-build && \
     if [ -f pnpm-lock.yaml ]; then \
-    corepack enable pnpm && pnpm run build; \
+    corepack enable pnpm && \
+    CAMPAIGN_DATABASE_PATH=/tmp/campaign-build/check.db REDIS_HOST=127.0.0.1 REDIS_PORT=1 TELEGRAM_BOT_TOKEN= pnpm run build; \
     else \
-    npm run build; \
+    CAMPAIGN_DATABASE_PATH=/tmp/campaign-build/check.db REDIS_HOST=127.0.0.1 REDIS_PORT=1 TELEGRAM_BOT_TOKEN= npm run build; \
     fi
 
 # Production image, copy all the files and run next
